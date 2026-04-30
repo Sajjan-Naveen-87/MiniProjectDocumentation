@@ -1,0 +1,106 @@
+\section{Functional Requirements}
+
+The Origin AI system must fulfill the following functional requirements to provide a comprehensive pedagogical experience:
+
+\begin{itemize}
+    \item \textbf{Contextual Awareness:} The system must capture and utilize the student's current page state, including the active question, subject, and chapter.
+    \item \textbf{In-Situ Interaction:} Students must be able to select text on the screen and receive an explanation directly within a floating widget.
+    \item \textbf{Multimodal Input:} The system must support both text-based queries and voice-based (transcribed) inputs.
+    \item \textbf{Tiered Resolution:} Queries should be resolved using the most cost-effective method available (Stored Solution $\rightarrow$ Subject KB $\rightarrow$ Vector Retrieval $\rightarrow$ LLM).
+    \item \textbf{Pedagogical Guardrails:} The system must enforce academic integrity by blocking answers during tests and providing hints instead of solutions for unattempted practice questions.
+    \item \textbf{Subject Disambiguation:} The system must accurately route queries to the appropriate subject knowledge base (Biology, Chemistry, Mathematics, Physics).
+    \item \textbf{Persistent Memory:} The system must maintain a history of student interactions and weak/strong topics to personalize responses.
+\end{itemize}
+
+\section{Non-Functional Requirements}
+
+The system must also adhere to several non-functional requirements to ensure scalability and reliability:
+
+\begin{itemize}
+    \item \textbf{Performance (Latency):} The median response time for locally resolved queries should be under 500ms. For LLM-backed queries, the response should begin streaming within 3 seconds.
+    \item \textbf{Scalability:} The backend must scale horizontally to handle at least 100 concurrent AI mentorship sessions.
+    \item \textbf{Cost Efficiency:} The system should achieve at least a 75\% reduction in operational costs compared to a direct LLM-only approach.
+    \item \textbf{Security:} Internal API endpoints must be protected from external access and require valid service tokens.
+    \item \textbf{Availability:} The system should maintain 99.9\% uptime for core mentorship features.
+\end{itemize}
+
+\section{Scope and Non-Goals}
+
+\subsection{In Scope}
+\begin{itemize}
+    \item Fully functional AI mentor integrated into the Origin platform.
+    \item Support for four core subjects: Biology, Chemistry, Mathematics, Physics.
+    \item Implementation of a 4-step tiered fallback pipeline.
+    \item Persistent vector storage for session memory.
+    \item Deployment on GCP Cloud Run and Vercel.
+\end{itemize}
+
+\subsection{Out of Scope}
+\begin{itemize}
+    \item Support for Indian languages beyond Hinglish in the current phase.
+    \item Offline-only operation (requires on-device models).
+    \item Full automated grading of high-stakes subjective assessments.
+    \item Real-time multi-student collaborative AI sessions.
+\end{itemize}
+
+\section{User Personas}
+
+To design a truly student-centric system, we identified three primary user personas that Origin AI serves:
+
+\begin{enumerate}
+    \item \textbf{Persona 1: The High-Stakes Aspirant (JEE/NEET)}  
+    \textit{Needs:} Speed, accuracy, and rigorous adherence to the curriculum.  
+    \textit{Behavior:} Spends 8-10 hours daily on the platform, asks complex conceptual questions, and needs immediate clarification during late-night study sessions when human tutors are unavailable.
+    \item \textbf{Persona 2: The Foundation Student (K-12)}  
+    \textit{Needs:} Simplified explanations, visual aids, and encouraging feedback.  
+    \textit{Behavior:} Struggles with basic concepts, uses voice mode more frequently, and requires Socratic guidance (hints) to build confidence.
+    \item \textbf{Persona 3: The Self-Learner (Remote Area)}  
+    \textit{Needs:} Low data consumption, offline-first assets, and affordable access.  
+    \textit{Behavior:} Has limited internet connectivity, relies on local knowledge bases (HC Verma, etc.), and values the tiered architecture's cost-efficiency.
+\end{enumerate}
+
+\section{Detailed Use Cases}
+
+\subsection{Use Case 1: In-Situ Doubt Resolution}
+\textbf{Primary Actor:} Student \\
+\textbf{Precondition:} Student is practicing questions in the OG Code arena. \\
+\textbf{Flow:}
+\begin{enumerate}
+    \item Student encounters a difficult term in a Physics question.
+    \item Student highlights the term using the mouse/touch.
+    \item A floating "Ask Origin AI" chip appears near the selection.
+    \item Student clicks the chip; the AI mentor opens with the highlighted text as context.
+    \item AI identifies the context (Chapter: Kinematics) and provides a targeted explanation.
+\end{enumerate}
+\textbf{Postcondition:} Student understands the term without leaving the practice page.
+
+\subsection{Use Case 2: Academic Integrity Enforcement}
+\textbf{Primary Actor:} Student \\
+\textbf{Precondition:} Student is taking a live Mock Test. \\
+\textbf{Flow:}
+\begin{enumerate}
+    \item Student tries to ask Origin AI for the solution to Question 15.
+    \item The system detects `PageContext.mode == "test"`.
+    \item The AI responds with a polite refusal: "I cannot assist you during a live test. Focus on your attempt, and we can discuss this in the post-test analysis."
+\end{enumerate}
+\textbf{Postcondition:} Academic integrity is maintained.
+
+\section{Hardware and Software Requirements}
+
+\subsection{Development Environment}
+\begin{itemize}
+    \item \textbf{OS:} macOS / Linux (Ubuntu 22.04+)
+    \item \textbf{Languages:} TypeScript (Frontend), Python 3.10+ (Backend)
+    \item \textbf{Frameworks:} Next.js 14 (App Router), FastAPI
+    \item \textbf{Database:} PostgreSQL with `pgvector` extension
+    \item \textbf{AI Models:} Google Gemini 1.5 Pro/Flash, OpenAI GPT-4o
+\end{itemize}
+
+\subsection{Production Environment (Deployment)}
+\begin{itemize}
+    \item \textbf{Cloud Provider:} Google Cloud Platform (GCP)
+    \item \textbf{Compute:} Cloud Run (Serverless)
+    \item \textbf{Frontend Hosting:} Vercel
+    \item \textbf{Static Assets:} Cloud Storage / Vercel Blob
+\end{itemize}
+

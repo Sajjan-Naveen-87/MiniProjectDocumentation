@@ -1,0 +1,110 @@
+\section{Backend Implementation with FastAPI}
+
+The heart of Origin AI's backend is a Python-based microservice built on \textbf{FastAPI}. This framework provides asynchronous request handling, which is essential for managing multiple LLM and database connections concurrently.
+
+\subsection{Microservice Architecture}
+The backend is organized into modular components:
+\begin{itemize}
+    \item \textbf{Context Assembler:} Normalizes inputs and fetches GlobalContext from PostgreSQL.
+    \item \textbf{Orchestrator Pipeline:} Implements the 4-step logic hierarchy with early exit conditions.
+    \item \textbf{Subject Knowledge Bases:} Memory-mapped JSON files containing thousands of validated pedagogical atoms.
+    \item \textbf{Vector Memory Store:} Interfaces with Neon Postgres and pgvector for semantic search.
+\end{itemize}
+
+\subsection{PostgreSQL with pgvector}
+We utilize the \textbf{pgvector} extension to handle semantic embeddings. An HNSW (Hierarchical Navigable Small World) index is created on the \texttt{embedding} column to ensure $O(\log n)$ search performance.
+\begin{verbatim}
+CREATE INDEX idx_mentor_turns_embedding_hnsw 
+ON mentor_turns USING hnsw (embedding vector_cosine_ops)
+WITH (m = 16, ef_construction = 200);
+\end{verbatim}
+
+\section{Frontend Engineering with Next.js}
+
+The student interface is built using \textbf{Next.js 14} with the App Router architecture. 
+
+\subsection{Floating Mentor UI}
+The mentor is implemented as a floating, draggable widget that maintains state continuity across pages. We use \textbf{Framer Motion} for fluid glassmorphism transitions and \textbf{Zustand} for lightweight state management.
+
+\subsection{Highlight Capture Engine}
+A custom DOM selection listener listens for \texttt{mouseup} and \texttt{selectionchange} events. When text is selected, a floating action chip is injected near the cursor, allowing the student to trigger an ``Explain this'' flow.
+
+\subsection{Multimodal Integration}
+Voice interaction is implemented using the Web MIDI and MediaRecorder APIs. Audio is streamed to the backend for transcription via Gemini's STT model, processed through the pipeline, and returned as synthesized speech using Gemini's TTS.
+
+\section{Deployment and Infrastructure}
+
+\subsection{Containerization}
+Both services are containerized using \textbf{Docker}. The frontend image is optimized using a multi-stage build, resulting in a 150MB runner image. The backend image (500MB) includes the Python environment and local knowledge bases.
+
+\subsection{Cloud Hosting}
+\begin{itemize}
+    \item \textbf{Frontend:} Deployed on \textbf{Vercel} for global edge delivery.
+    \item \textbf{Backend:} Hosted on \textbf{GCP Cloud Run} with autoscaling (min-instances=1, concurrency=10).
+    \item \textbf{Database:} \textbf{Neon Postgres} provides serverless PostgreSQL with automatic storage scaling.
+\end{itemize}
+
+\section{Security and API Protection}
+
+\subsection{Authentication Tunneling}
+The Next.js API route acts as a secure proxy. It validates the user's HttpOnly session cookie before appending an internal JWT service token and forwarding the request to the Python backend. This ensures that internal AI endpoints are never exposed directly to the public internet.
+
+\subsection{Rate Limiting}
+We implement tiered rate limiting via \textbf{Upstash Redis}. Limits are enforced per user-id (e.g., 10 messages per minute) to prevent API budget exhaustion and denial-of-service attempts.
+\newpage
+\section{Technical Deep Dive: Context Assembly}
+
+The core of the "situational awareness" in Origin AI lies in the `ContextAssembler` class. This component is responsible for gathering disparate data points and normalizing them into a single prompt context.
+
+\begin{verbatim}
+class ContextAssembler:
+    async def assemble(self, user_id: str, ui_state: dict) -> OriginAiInput:
+        # Layer 1: Fetch GlobalContext from Postgres
+        analytics = await db.fetch_analytics(user_id)
+        global_context = GlobalContext(
+            weak_topics=analytics.weak_topics,
+            mastery_score=analytics.overall_mastery
+        )
+        
+        # Layer 2 & 3: Map Page and Highlight Context
+        page_context = PageContext(**ui_state.get('page', {}))
+        highlight = HighlightContext(text=ui_state.get('selected_text'))
+        
+        return OriginAiInput(
+            global_ctx=global_context,
+            page_ctx=page_context,
+            highlight_ctx=highlight
+        )
+\end{verbatim}
+
+\section{Implementation of the Tiered Pipeline}
+
+The `OrchestratorPipeline` implements a chain-of-responsibility pattern. Each step in the pipeline is an independent module that can either resolve the query or pass it to the next step.
+
+\begin{itemize}
+    \item \textbf{Stage 1 (Exact Match):} Uses a Redis-based cache to store frequently asked questions. Hit rate: 12\%.
+    \item \textbf{Stage 2 (Local KB):} Loads subject-specific pedagogical atoms into memory using a Python dictionary. We use a scoring algorithm to match the query to the closest atom.
+    \item \textbf{Stage 3 (Semantic Search):} We generate a 1536-dimensional embedding using `text-embedding-3-small` and perform a vector search in PostgreSQL.
+    \item \textbf{Stage 4 (LLM Fallback):} If all else fails, a formatted prompt is sent to the Gemini 1.5 Pro API.
+\end{itemize}
+
+\section{Unified Math Rendering Logic}
+
+To handle the display of complex mathematical formulas, we implemented a custom React component \texttt{MathText}. This component uses a regex-based parser to identify LaTeX delimiters (e.g., \verb|$ ... $| or \verb|\begin{equation} ... \end{equation}|) and renders them using \textbf{KaTeX} for high-performance typesetting.
+\newpage
+\begin{verbatim}
+export function MathText({ content }: { content: string }) {
+  const parts = content.split(/(\$.*?\$)/g);
+  return (
+    <span>
+      {parts.map((part, i) => 
+        part.startsWith('$') ? 
+          <InlineMath key={i} math={part.slice(1, -1)} /> : 
+          <span key={i}>{part}</span>
+      )}
+    </span>
+  );
+}
+\end{verbatim}
+This component is used across the entire platform, ensuring that a square root symbol looks identical whether it's in a mock test or a mentor explanation.
+

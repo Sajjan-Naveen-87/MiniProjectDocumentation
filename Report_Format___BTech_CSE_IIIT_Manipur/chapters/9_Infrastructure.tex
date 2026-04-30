@@ -1,0 +1,31 @@
+\section{Infrastructure Overview}
+
+To maintain the "Low Cost" objective during deployment, Origin AI utilizes a modern, containerized microservice architecture. This allows for lightweight deployment on commodity hardware or spot cloud instances.
+
+\section{Containerization Strategy}
+
+Both the \textbf{Next.js Frontend} and the \textbf{Python AI Microservice} are Dockerized to ensure environment parity across development, staging, and production.
+
+\begin{itemize}
+    \item \textbf{Next.js Frontend:} A multi-stage Docker build is used to keep the production image under 200MB. We use a Node.js \texttt{alpine} base to minimize the security attack surface.
+    \item \textbf{Python Backend:} The microservice is packaged with FastAPI and LangChain. We use a \texttt{python:3.10-slim} base for optimal performance and smaller image size.
+\end{itemize}
+
+\section{Docker Compose Orchestration}
+
+For local development and testing, we use \textbf{Docker Compose} to manage the lifecycle of the services:
+\begin{enumerate}
+    \item \texttt{origin-frontend}: The Next.js interaction layer.
+    \item \texttt{origin-backend}: The Python orchestrator.
+    \item \texttt{origin-db}: PostgreSQL with the \texttt{pgvector} extension.
+\end{enumerate}
+
+\section{Cloud Hosting and Scaling}
+
+To handle sudden spikes in student traffic (e.g., during exam seasons), the infrastructure is designed for \textbf{Horizontal Scaling}.
+
+\begin{itemize}
+    \item \textbf{Statelessness:} The Python orchestrator is entirely stateless. All session memory is persisted in PostgreSQL, allowing any replica to pick up a conversation given the session ID.
+    \item \textbf{Spot Instances:} Since AI generation is compute-heavy, we run backend containers on cloud spot instances, which are significantly cheaper than on-demand instances.
+    \item \textbf{Serverless Fallback:} For low-traffic subjects, the backend can be deployed as a serverless function (e.g., Google Cloud Run) to ensure we pay zero during idle hours.
+\end{itemize}

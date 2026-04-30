@@ -1,0 +1,206 @@
+\documentclass[a4paper, 11pt, oneside]{report} 
+\usepackage[left=1.5in, right=1in, top=1in, bottom=1in]{geometry}
+
+\newcommand{\plogo}{\fbox{$\mathcal{PL}$}} 
+\usepackage{graphicx}
+\usepackage{graphics}
+\usepackage{float}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage[utf8]{inputenc} 
+\usepackage[T1]{fontenc} 
+\usepackage{fouriernc} 
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{pgfplots}
+\usepackage{graphics}
+\usepackage{longtable}
+\usepackage[nottoc]{tocbibind}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{lipsum}
+\usepackage{pgfgantt}
+\usepackage{booktabs}
+\DeclareUnicodeCharacter{20B9}{Rs.~}
+\begin{document} 	
+	\begin{titlepage} 
+		
+		\centering 
+		
+		\vspace*{\baselineskip} 
+		
+		\vspace{0.75\baselineskip}
+		
+		{\LARGE ORIGIN AI: A Tiered Multi-Subject Context Engine for Low-Cost Pedagogical Mentorship}
+		
+		\vspace{0.75\baselineskip}
+		
+		\vspace{2\baselineskip}
+
+		A report submitted for the course named Project - I (CS3201)
+		
+		\vspace*{7\baselineskip}
+		
+		Submitted By
+		
+		\vspace{0.5\baselineskip}
+		
+		{\scshape\Large S Naveen \\ 6th Semester \\ 230101099}
+		
+		\vspace{0.5\baselineskip}
+		
+		Supervised By
+		
+		\vspace{0.5\baselineskip}
+		
+		{\scshape\Large Dr. Nongmeikapam Kishorjit Singh}
+		
+		\vspace{0.5\baselineskip}
+		
+		\vfill
+		
+		\begin{center}
+			\includegraphics[width=5cm]{report_file/iiit manipur.png}
+		\end{center}
+	
+	{\scshape\small Department of Computer Science and Engineering\\ Indian Institute of Information Technology Senapati, Manipur \\ April, 2026}
+	
+\end{titlepage}
+
+%----------------------------------------------------------------------------------------
+
+% \begin{center}
+\begin{center}
+   { \LARGE \textbf{Declaration}}
+\end{center}
+In this submission, I have expressed my idea in my own words, and I have adequately cited and referenced any ideas or words that were taken from another source. I also declare that I adhere to all principles of academic honesty and integrity and that I have not misrepresented or falsified any ideas, data, facts, or sources in this submission. If any violation of the above is made, I understand that the institute may take disciplinary action. Such a violation may also engender disciplinary action from the sources which were not properly cited or permission not taken when needed.
+
+\vspace{2cm}\hspace{8.35cm} S Naveen \\
+\vspace{1cm}\hspace{9cm} 230101099 \\
+\vspace{1CM} DATE: 
+
+\newpage
+
+\begin{center}
+	\thispagestyle{empty}
+		
+		\begin{table}
+			\centering
+			\includegraphics[scale=0.2]{report_file/iiit manipur.png}
+			\begin{tabular}{l}
+				Department of Computer Science and Engineering \\
+				Indian Institute of Information Technology Senapati, Manipur \\
+			\end{tabular}
+		\end{table}
+		\par\noindent\rule{\textwidth}{0.4pt}
+			% \textbf{} \\
+			Dr. Nongmeikapam Kishorjit Singh
+			\hspace*{\fill} Email: \href{mailto:kishorjit@iiitmanipur.ac.in}{kishorjit@iiitmanipur.ac.in}\\
+			Assistant Professor, CSE
+			\hspace*{0pt}\hfill Contact No: +91 8974008610\\[2cm]
+			{\Huge \textbf{\emph{To Whom It May Concern}}}\\[2cm]
+			\linespread{1.13}
+			\large{This is to certify that the project report 
+                entitled \textbf{"ORIGIN AI: A Tiered Multi-Subject Context Engine for Low-Cost Pedagogical Mentorship",} submitted to the department of Computer Science and Engineering, Indian Institute of Information Technology Senapati, Manipur in partial fullfillment for the award of degree of Bachelor of Technology in Computer Science and Engineering is record bonafide work carried out by \textbf{S Naveen} bearing roll number 230101099.}\\[2.0cm]
+			\hspace*{2.6in}\large{Signature of Supervisor}\\[0.3cm]
+			\hspace*{2.in}\textbf{(Dr. Nongmeikapam Kishorjit Singh)}\\[1cm]
+			
+	\end{center}
+        \begin{flushleft}
+            \begin{tabular}{l}
+                Signature of the Examiner 1: ............................ \\[0.5cm]
+                Signature of the Examiner 2: ............................ \\[0.5cm]
+                Signature of the Examiner 3: ............................ \\[0.5cm]
+                Signature of the Examiner 4: ............................
+            \end{tabular}
+        \end{flushleft}
+        \newpage
+ 
+
+\begin{abstract}
+	With the proliferation of Large Language Models (LLMs) in educational technology, the challenges of operational cost, latency, and contextual relevance have become critical barriers to scaling personalized mentorship. This project introduces \textbf{Origin AI}, a context-aware, multimodal AI mentor designed for high-stakes competitive examination preparation. Origin AI implements a novel \textbf{4-Layer Context Assembly} model that integrates student history, real-time UI state, visual highlights, and multimodal queries to provide in-situ assistance without manual context description. To address financial sustainability, we propose a \textbf{Tiered Orchestration Pipeline} that prioritizes zero-cost local assets (stored solutions and subject-specific knowledge bases) before escalating to synthetic LLM generation. Experimental results demonstrate an 85\% reduction in token consumption and a 73\% reduction in median latency, while achieving 96\% subject resolution accuracy via a scoring-based \textbf{Cross-Subject Gate}. The system also incorporates pedagogical guardrails to enforce academic integrity and hint-first mentorship, ensuring that the AI functions as a teacher rather than a solution-providing proxy.
+\end{abstract}
+
+\newpage
+
+        \begin{center}
+            { \LARGE \textbf{Acknowledgement}}
+        \end{center}
+	I would like to express my deepest gratitude to my supervisor, \newline
+    \textbf{Dr. Nongmeikapam Kishorjit Singh}, for his invaluable guidance, technical insights, and constant encouragement throughout the development of this project. His expertise in AI and pedagogy was instrumental in refining the tiered orchestration logic and the context assembly model. I also thank the Department of Computer Science and Engineering at IIIT Manipur for providing the resources and environment necessary to conduct this research. Finally, I am grateful to my family and friends for their unwavering support during the countless hours spent on implementation and documentation.
+	\\ \\
+	\begin{flushright}
+        S Naveen \\
+        230101099
+    \end{flushright}
+
+\newpage
+\begin{center}
+    {\LARGE \textbf{Professor's Word on the Project}}
+\end{center}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{report_file/Kishorjit.png}
+    \caption{Dr. Nongmeikapam Kishorjit Singh, Assistant Professor, CSE, IIIT Manipur}
+    \label{fig:professor_page}
+\end{figure}
+
+\begin{quote}
+    \centering
+    \textit{``Genuine and most appropriate AI assisted teaching-learning for students preparing the competitive exams. Also it gives voice assisted suggestions and instructions in English and Hindi. It’s Truly Worthy AI tool and can be explored by the aspirants.''}
+\end{quote}
+
+\newpage
+
+	\tableofcontents
+	\listoffigures
+        \listoftables
+	\chapter{Introduction}
+	\input{chapters/1_Introduction}
+        \chapter{Literature Survey}
+        \input{chapters/2_Literature_Survey}
+        \chapter{Requirement Engineering}
+        \input{chapters/3_Requirement}
+        \chapter{System Design}
+        \input{chapters/4_System_Design}
+        \chapter{Implementation}
+        \input{chapters/5_Implementation}
+        \chapter{Results}
+        \input{chapters/6_Results}
+        \chapter{Security and Privacy}
+        \input{chapters/8_Security}
+        \chapter{Infrastructure and Deployment}
+        \input{chapters/9_Infrastructure}
+        \chapter{Conclusion}
+        \input{chapters/7_Conclusion}
+
+        \chapter*{Peer Reviews}
+        \addcontentsline{toc}{chapter}{Peer Reviews}
+
+        \begin{itemize}
+            \item \textbf{Abhijit Kumar (CSE - 230101031)}: \\
+            \textit{``I would like to be happy to have this product during my prep since, I being a remote learner, Couldn’t have any mentor or guide to tell me what’s wrong. So since this is also analyses our performance it would save my time.''}
+
+            \item \textbf{Suhas (CSE - 230101094)}: \\
+            \textit{``I am pretty sad that I didn't get this kind of exam prep website before this. Now that I have this, we have a way to learn everything remotely. So this will help me develop my concepts for JEE and I hope This will be more like a game and I hope this will be more like a game like codedex (or) anything similar for this which would make this more playful and fun and keeps motivated.''}
+
+            \item \textbf{Avvaru Naga Prabhas (230101015)}: \\
+            \textit{``Actually this is good while seeing this type of AI integrated JEE preparation platform with all required features, its good to use and pretty comfortable.''}
+
+            \item \textbf{Veena (230103032)}: \\
+            \textit{``This will be a really helpful web application for students preparing for competitive exams. All the necessary things for a student who is preparing for exams are at one place in this application (mind maps, heatmaps etc.). This is a great application with proper AI assistance, which can be an individual virtual mentor for each and every user. The analysis provided will be helpful for improvement of the user.''}
+
+            \item \textbf{Akanksha (230101072)}: \\
+            \textit{``An all-in-one feature website that is really helpful to students. The total focus mode and the task manager feature really stood out to me. The UI design and the arrangement of the items on the dashboard make the website easy to navigate. The UI is attractive and invites students to look at exam preparation as a fun activity instead of a monotonous task. In conclusion, a helpful idea that can shape the students’ future towards betterment.''}
+        \end{itemize}
+        
+        \bibliography{report}
+	\bibliographystyle{plain}
+        
+	
+	
+	
+	
+\end{document}

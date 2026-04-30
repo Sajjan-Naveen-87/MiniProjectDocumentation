@@ -1,0 +1,28 @@
+\section{Security Philosophy}
+
+As a platform handling student data and competitive exam preparation, security and privacy are paramount. Origin AI implements a "Security-in-Depth" approach across the entire stack, ensuring that AI-driven interactions do not compromise user data or system integrity.
+
+\section{Authentication Tunneling}
+
+A major architectural challenge was securely connecting the public Next.js frontend to the private Python microservice. Exposing the internal Python API directly to the internet would allow unauthorized access to the LLM orchestrator, leading to potential budget exhaustion.
+
+We implemented \textbf{Authentication Tunneling}. All requests to \texttt{/api/origin-ai} are intercepted by the Next.js API route. The server validates the student's public session cookie (verified against Firebase/Auth) and then appends a trusted internal secret (JWT) before forwarding the request to the Python backend over a secure, private network. This ensures that the Python API only responds to requests that have been pre-validated by the main application gateway.
+
+\section{Data Privacy and PII Protection}
+
+Origin AI adheres to data minimization principles to protect Student Personally Identifiable Information (PII).
+
+\begin{itemize}
+    \item \textbf{Anonymous Orchestration:} The Python microservice only receives a hashed \texttt{user\_id}. It does not have access to the student’s real name or email unless explicitly required for the "GlobalContext" greeting.
+    \item \textbf{Encrypted Persistence:} All conversation logs and semantic knowledge nodes in the \texttt{mentor\_sessions} table are encrypted at rest using AES-256 standards.
+\end{itemize}
+
+\section{Rate-Limiting and Anti-Abuse}
+
+To prevent "API Harvesting"—where a malicious user or bot tries to extract the entire knowledge base by flooding the chat—we implemented a multi-layered rate-limiting strategy.
+
+\begin{enumerate}
+    \item \textbf{Frontend Throttling:} Limits the number of queries a user can send within a 5-minute window via client-side state.
+    \item \textbf{Backend Leaky Bucket:} The \texttt{rate-limit.ts} logic in the Next.js boundary uses Upstash Redis to enforce a sliding window limit (e.g., 50 requests per hour per user).
+\end{enumerate}
+This ensures that the expensive LLM fallback layer is protected from accidental or intentional misuse.

@@ -1,0 +1,36 @@
+\section{Summary of Technical Contributions}
+
+This project successfully demonstrated that a context-aware, tiered architecture is a viable solution for low-cost, high-quality AI mentorship. The primary technical achievements include:
+\begin{itemize}
+    \item \textbf{4-Layer Context Assembly:} Eliminating manual context entry and reducing follow-up friction.
+    \item \textbf{Tiered Fallback Pipeline:} Achieving an 85\% cost reduction and sub-second median latency.
+    \item \textbf{Cross-Subject Disambiguation:} Ensuring disciplinary accuracy in a multi-subject environment.
+    \item \textbf{Pedagogical Guardrails:} Enforcing test integrity and hint-first tutoring.
+\end{itemize}
+
+\section{Social Impact and Accessibility}
+
+By drastically reducing the operational costs of LLM interaction, Origin AI makes personalized tutoring financially accessible to a broader demographic of students. The inclusion of multimodal (voice) input and highlight capture further enhances accessibility for students with disabilities or those who prefer natural interactions.
+
+\section{Limitations of Current Implementation}
+
+While the system is robust, several limitations remain:
+\begin{itemize}
+    \item \textbf{Connectivity Dependency:} The system requires an active internet connection for LLM and embedding API calls.
+    \item \textbf{Knowledge Base Coverage:} While extensive, the KB may not cover extremely niche or highly advanced graduate-level concepts.
+    \item \textbf{Language Support:} The system is currently optimized for English and Hinglish; support for further vernacular languages is limited.
+\end{itemize}
+
+\section{Future Work}
+
+Future development will focus on three key areas:
+\begin{enumerate}
+\item \textbf{Small Language Models (SLMs):} Fine-tuning open-source SLMs (e.g., Phi-2 or Gemma) specifically on the JEE/NEET curriculum to replace expensive frontier model calls.
+    \item \textbf{Offline Mode:} Packaging compressed knowledge bases and quantized local models for on-device inference, allowing students in remote areas with poor connectivity to benefit from AI mentorship.
+    \item \textbf{Full Multimodal Vision Integration:} Moving beyond text highlight capture to true visual understanding, where students can point their camera at handwritten derivations or physical laboratory setups for real-time AI commentary.
+    \item \textbf{Adaptive Learning Paths:} Utilizing the persistent `GlobalContext` to not only answer doubts but also generate personalized "Daily Practice Problems" (DPPs) that target a student's specific mastery gaps.
+    \item \textbf{Peer-to-Peer AI Assistance:} Implementing a feature where the AI can facilitate peer learning by connecting students with similar doubts or complementary strengths, under the supervision of the AI mentor.
+\end{enumerate}
+
+
+
